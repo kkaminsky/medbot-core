@@ -1,0 +1,379 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-schema
+      author: konstantinkaminskiy
+      changes:
+      - sql:
+            sql: CREATE SCHEMA IF NOT EXISTS ${schema};
+  - changeSet:
+      id: create-table-user-main
+      author: konstantinkaminskiy
+      changes:
+        - createTable:
+            tableName: user_main
+            schemaName: ${schema}
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: user_main_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  name: keycloak_id
+                  type: VARCHAR
+              - column:
+                  name: username
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: registration
+                  type: VARCHAR
+              - column:
+                  name: create_time
+                  type: TIMESTAMP(3)
+              - column:
+                  name: update_time
+                  type: TIMESTAMP(3)
+  - changeSet:
+      id: create-table-user-platform
+      author: konstantinkaminskiy
+      changes:
+        - createTable:
+            tableName: user_platform
+            schemaName: ${schema}
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: user_platform_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: platform
+                  type: VARCHAR
+              - column:
+                  name: external_id
+                  type: VARCHAR
+              - column:
+                  name: user_main_id
+                  type: UUID
+              - column:
+                  name: username
+                  type: VARCHAR
+              - column:
+                  name: create_time
+                  type: TIMESTAMP(3)
+              - column:
+                  name: update_time
+                  type: TIMESTAMP(3)
+  - changeSet:
+      id: create-table-sync-code
+      author: konstantinkaminskiy
+      changes:
+        - createTable:
+            tableName: sync_code
+            schemaName: ${schema}
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: sync_code_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: platform_id
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: platform
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: code
+                  type: VARCHAR
+              - column:
+                  name: create_time
+                  type:  TIMESTAMP(3)
+              - column:
+                  name: update_time
+                  type:  TIMESTAMP(3)
+  - changeSet:
+      id: create-table-doctor
+      author: konstantinkaminskiy
+      changes:
+        - createTable:
+            tableName: doctor
+            schemaName: ${schema}
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: doctor_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: doctor_user_main_fkey
+                    references: ${schema}.user_main(id)
+                  name: user_main_id
+                  type: UUID
+              - column:
+                  name: create_time
+                  type: TIMESTAMP(3)
+              - column:
+                  name: update_time
+                  type: TIMESTAMP(3)
+  - changeSet:
+      id: create-table-patient
+      author: konstantinkaminskiy
+      changes:
+        - createTable:
+            tableName: patient
+            schemaName: ${schema}
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: patient_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: patient_user_main_fkey
+                    references: ${schema}.user_main(id)
+                  name: user_main_id
+                  type: UUID
+              - column:
+                  name: breakfast_time
+                  type: TIME(3)
+              - column:
+                  name: lanch_time
+                  type: TIME(3)
+              - column:
+                  name: dinner_time
+                  type: TIME(3)
+              - column:
+                  name: get_up_time
+                  type: TIME(3)
+              - column:
+                  name: go_to_bed_time
+                  type: TIME(3)
+              - column:
+                  name: create_time
+                  type: TIMESTAMP(3)
+              - column:
+                  name: update_time
+                  type: TIMESTAMP(3)
+  - changeSet:
+      id: create-table-treatment
+      author: konstantinkaminskiy
+      changes:
+        - createTable:
+            tableName: treatment
+            schemaName: ${schema}
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: treatment_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: treatment_patient_fkey
+                    references: ${schema}.patient(id)
+                  name: patient_id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: treatment_doctor_fkey
+                    references: ${schema}.doctor(id)
+                  name: doctor_id
+                  type: UUID
+              - column:
+                  name: is_finished
+                  type: BOOLEAN
+                  defaultValueBoolean: "false"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_begin
+                  type: TIMESTAMP(3)
+              - column:
+                  name: date_finish
+                  type: TIMESTAMP(3)
+              - column:
+                  name: create_time
+                  type: TIMESTAMP(3)
+              - column:
+                  name: update_time
+                  type: TIMESTAMP(3)
+  - changeSet:
+      id: create-table-drug
+      author: konstantinkaminskiy
+      changes:
+        - createTable:
+            tableName: drug
+            schemaName: ${schema}
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: drug_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  name: name
+                  type: VARCHAR
+              - column:
+                  name: code
+                  type: VARCHAR
+              - column:
+                  name: create_time
+                  type: TIMESTAMP(3)
+              - column:
+                  name: update_time
+                  type: TIMESTAMP(3)
+  - changeSet:
+      id: create-table-receipt
+      author: konstantinkaminskiy
+      changes:
+        - createTable:
+            tableName: receipt
+            schemaName: ${schema}
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: receipt_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: receipt_treatment_fkey
+                    references: ${schema}.treatment(id)
+                  name: treatment_id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: receipt_drug_fkey
+                    references: ${schema}.drug(id)
+                  name: drug_id
+                  type: UUID
+              - column:
+                  name: is_actual
+                  type: BOOLEAN
+                  defaultValueBoolean: "true"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: count_in_period
+                  type: INT
+              - column:
+                  name: period_enum
+                  type: VARCHAR
+              - column:
+                  name: when_enum
+                  type: VARCHAR
+              - column:
+                  name: end_date
+                  type: TIMESTAMP(3)
+              - column:
+                  name: create_time
+                  type: TIMESTAMP(3)
+              - column:
+                  name: update_time
+                  type: TIMESTAMP(3)
+  - changeSet:
+      id: create-table-health-report
+      author: konstantinkaminskiy
+      changes:
+        - createTable:
+            tableName: health_report
+            schemaName: ${schema}
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: health_report_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: health_report_receipt_fkey
+                    references: ${schema}.receipt(id)
+                  name: receipt_id
+                  type: UUID
+              - column:
+                  name: is_missed
+                  type: BOOLEAN
+                  defaultValueBoolean: "true"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: report_date
+                  type: TIMESTAMP(3)
+              - column:
+                  name: create_time
+                  type: TIMESTAMP(3)
+              - column:
+                  name: update_time
+                  type: TIMESTAMP(3)
+  - changeSet:
+      id: create-table-health-report-text
+      author: konstantinkaminskiy
+      changes:
+        - createTable:
+            tableName: health_report_text
+            schemaName: ${schema}
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: health_report_text_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: health_report_text_treatment_fkey
+                    references: ${schema}.treatment(id)
+                  name: treatment_id
+                  type: UUID
+              - column:
+                  name: text
+                  type: VARCHAR
+              - column:
+                  name: report_date
+                  type: TIMESTAMP(3)
+              - column:
+                  name: create_time
+                  type: TIMESTAMP(3)
+              - column:
+                  name: update_time
+                  type: TIMESTAMP(3)

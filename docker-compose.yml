@@ -1,0 +1,44 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres_medbot_core
+    environment:
+      POSTGRES_DB: medbot_core
+      POSTGRES_USER: konstantin
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5444:5432"
+
+  postgres_keycloak:
+    image: postgres
+    container_name: postgres_keycloak_medbot
+    environment:
+      POSTGRES_DB: keycloak-db
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5443:5433"
+
+  keycloak:
+    hostname: keycloak
+    image: quay.io/keycloak/keycloak:11.0.0
+    expose:
+      - 8080
+    ports:
+      - "8282:8080"
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres_keycloak_medbot
+      DB_DATABASE: keycloak-db
+      DB_USER: keycloak
+      DB_PASSWORD: secret
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+
+  rabbitmq_dh:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
